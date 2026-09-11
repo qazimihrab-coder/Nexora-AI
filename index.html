@@ -1,0 +1,973 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nexora AI</title>
+
+  <script src="https://js.puter.com/v2/"></script>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: Arial, Tahoma, sans-serif;
+    }
+
+    :root {
+      --bg: #050816;
+      --panel: #10182b;
+      --panel2: #17223a;
+      --text: #ffffff;
+      --muted: #9ba8c5;
+      --border: #2b3957;
+      --blue: #55baff;
+      --blue2: #246bff;
+      --danger: #ff5573;
+      --shadow: 0 15px 50px rgba(0, 0, 0, .35);
+    }
+
+    body.light {
+      --bg: #eef3fb;
+      --panel: #ffffff;
+      --panel2: #e5ecf8;
+      --text: #101828;
+      --muted: #65728a;
+      --border: #d4deed;
+      --blue: #1677d2;
+      --blue2: #1555d8;
+      --shadow: 0 15px 50px rgba(40, 65, 110, .12);
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      transition: .3s;
+    }
+
+    button,
+    input,
+    textarea,
+    select {
+      font: inherit;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    .auth-page {
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 25px;
+      background:
+        radial-gradient(circle at top right, #123d72 0, transparent 35%),
+        radial-gradient(circle at bottom left, #14245c 0, transparent 35%),
+        var(--bg);
+    }
+
+    .auth-box {
+      width: 100%;
+      max-width: 950px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      background: rgba(16, 24, 43, .95);
+      border: 1px solid var(--border);
+      border-radius: 28px;
+      overflow: hidden;
+      box-shadow: var(--shadow);
+    }
+
+    .auth-intro {
+      padding: 55px 35px;
+      background: linear-gradient(145deg, #102b57, #071021);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .logo {
+      color: var(--blue);
+      font-size: 38px;
+      font-weight: bold;
+      margin-bottom: 20px;
+    }
+
+    .auth-intro h1 {
+      font-size: 34px;
+      margin-bottom: 18px;
+    }
+
+    .auth-intro p {
+      color: #b6c5df;
+      line-height: 2;
+      font-size: 16px;
+    }
+
+    .features {
+      margin-top: 28px;
+      line-height: 2.6;
+      color: #d7e4ff;
+    }
+
+    .auth-form {
+      padding: 40px 30px;
+      background: var(--panel);
+    }
+
+    .auth-form h2 {
+      font-size: 28px;
+      margin-bottom: 8px;
+    }
+
+    .subtitle {
+      color: var(--muted);
+      margin-bottom: 25px;
+    }
+
+    .tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 22px;
+    }
+
+    .tab {
+      flex: 1;
+      padding: 12px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      background: transparent;
+      color: var(--text);
+    }
+
+    .tab.active {
+      background: var(--blue2);
+      border-color: var(--blue2);
+      color: white;
+    }
+
+    .field {
+      margin-bottom: 15px;
+    }
+
+    .field label {
+      display: block;
+      margin-bottom: 8px;
+      color: var(--muted);
+    }
+
+    .field input,
+    .field select {
+      width: 100%;
+      padding: 14px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background: var(--panel2);
+      color: var(--text);
+      outline: none;
+    }
+
+    .field input:focus {
+      border-color: var(--blue);
+    }
+
+    .password-box {
+      position: relative;
+    }
+
+    .password-box input {
+      padding-left: 50px;
+    }
+
+    .show-password {
+      position: absolute;
+      left: 12px;
+      top: 11px;
+      border: 0;
+      background: transparent;
+      color: var(--muted);
+      font-size: 20px;
+    }
+
+    .main-btn {
+      width: 100%;
+      padding: 14px;
+      border: 0;
+      border-radius: 12px;
+      background: linear-gradient(135deg, var(--blue), var(--blue2));
+      color: white;
+      font-weight: bold;
+      margin-top: 8px;
+    }
+
+    .message {
+      margin-top: 15px;
+      padding: 12px;
+      border-radius: 10px;
+      background: var(--panel2);
+      color: var(--muted);
+      text-align: center;
+      line-height: 1.8;
+    }
+
+    .app {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .topbar {
+      height: 75px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 22px;
+      background: var(--panel);
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 5;
+    }
+
+    .top-logo {
+      color: var(--blue);
+      font-size: 25px;
+      font-weight: bold;
+    }
+
+    .top-actions {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .small-btn {
+      border: 1px solid var(--border);
+      background: var(--panel2);
+      color: var(--text);
+      border-radius: 10px;
+      padding: 10px 13px;
+    }
+
+    .app-body {
+      display: flex;
+      flex: 1;
+      min-height: calc(100vh - 75px);
+    }
+
+    .sidebar {
+      width: 280px;
+      background: var(--panel);
+      border-left: 1px solid var(--border);
+      padding: 18px;
+    }
+
+    .new-chat {
+      width: 100%;
+      padding: 13px;
+      border: 0;
+      border-radius: 12px;
+      background: var(--blue2);
+      color: white;
+      font-weight: bold;
+      margin-bottom: 18px;
+    }
+
+    .side-title {
+      color: var(--muted);
+      font-size: 13px;
+      margin-bottom: 10px;
+    }
+
+    .history {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .history-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      padding: 11px;
+      border: 1px solid transparent;
+      border-radius: 10px;
+      color: var(--text);
+      background: transparent;
+      text-align: right;
+    }
+
+    .history-item:hover {
+      background: var(--panel2);
+      border-color: var(--border);
+    }
+
+    .history-item span {
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+
+    .delete-history {
+      color: var(--danger);
+      border: 0;
+      background: transparent;
+    }
+
+    .chat-area {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+    }
+
+    .welcome {
+      text-align: center;
+      padding: 60px 20px 25px;
+    }
+
+    .welcome h1 {
+      color: var(--blue);
+      font-size: 42px;
+      margin-bottom: 18px;
+    }
+
+    .welcome p {
+      color: var(--muted);
+      line-height: 2;
+      max-width: 650px;
+      margin: auto;
+    }
+
+    .messages {
+      flex: 1;
+      width: 100%;
+      max-width: 950px;
+      margin: auto;
+      padding: 20px;
+      overflow-y: auto;
+    }
+
+    .message-row {
+      display: flex;
+      margin-bottom: 18px;
+    }
+
+    .message-row.user {
+      justify-content: flex-start;
+    }
+
+    .message-row.ai {
+      justify-content: flex-end;
+    }
+
+    .bubble {
+      max-width: 85%;
+      padding: 15px 17px;
+      border-radius: 17px;
+      line-height: 2;
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+    }
+
+    .user .bubble {
+      background: var(--blue2);
+      color: white;
+      border-bottom-left-radius: 5px;
+    }
+
+    .ai .bubble {
+      background: var(--panel2);
+      border: 1px solid var(--border);
+      border-bottom-right-radius: 5px;
+    }
+
+    .bubble-actions {
+      margin-top: 8px;
+      display: flex;
+      gap: 8px;
+    }
+
+    .bubble-actions button {
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--muted);
+      border-radius: 8px;
+      padding: 4px 9px;
+    }
+
+    .composer {
+      width: 100%;
+      max-width: 950px;
+      margin: auto;
+      padding: 15px 20px 25px;
+    }
+
+    .input-box {
+      display: flex;
+      align-items: flex-end;
+      gap: 10px;
+      padding: 10px;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      box-shadow: var(--shadow);
+    }
+
+    .input-box textarea {
+      flex: 1;
+      min-height: 45px;
+      max-height: 150px;
+      resize: none;
+      border: 0;
+      outline: none;
+      background: transparent;
+      color: var(--text);
+      padding: 10px;
+    }
+
+    .send-btn {
+      border: 0;
+      border-radius: 12px;
+      padding: 12px 17px;
+      background: var(--blue2);
+      color: white;
+    }
+
+    .file-btn {
+      border: 1px solid var(--border);
+      background: var(--panel2);
+      color: var(--text);
+      border-radius: 12px;
+      padding: 12px;
+    }
+
+    .file-name {
+      color: var(--muted);
+      font-size: 12px;
+      margin-top: 8px;
+    }
+
+    .empty {
+      color: var(--muted);
+      text-align: center;
+      padding: 20px;
+    }
+
+    @media (max-width: 800px) {
+      .auth-box {
+        grid-template-columns: 1fr;
+      }
+
+      .auth-intro {
+        display: none;
+      }
+
+      .sidebar {
+        display: none;
+      }
+
+      .topbar {
+        padding: 0 12px;
+      }
+
+      .top-logo {
+        font-size: 21px;
+      }
+
+      .small-btn {
+        padding: 8px;
+        font-size: 12px;
+      }
+
+      .welcome {
+        padding-top: 35px;
+      }
+
+      .welcome h1 {
+        font-size: 32px;
+      }
+
+      .bubble {
+        max-width: 92%;
+      }
+
+      .composer {
+        padding: 10px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- صفحه ورود و ثبت‌نام -->
+  <section id="authPage" class="auth-page">
+    <div class="auth-box">
+
+      <div class="auth-intro">
+        <div class="logo">Nexora AI</div>
+        <h1>هوش مصنوعی برای آینده</h1>
+        <p>
+          با Nexora AI سوال بپرس، متن بنویس، یاد بگیر و ایده‌های جدید بساز.
+          همه‌چیز ساده، سریع و در یک محیط مدرن.
+        </p>
+
+        <div class="features">
+          ⚡ پاسخ‌گویی سریع<br>
+          🌍 پشتیبانی از چند زبان<br>
+          💬 مدیریت گفتگوها<br>
+          📱 طراحی مناسب موبایل
+        </div>
+      </div>
+
+      <div class="auth-form">
+        <h2 id="authTitle">خوش آمدید</h2>
+        <p class="subtitle" id="authSubtitle">
+          برای استفاده از Nexora AI وارد شوید.
+        </p>
+
+        <div class="tabs">
+          <button class="tab active" id="loginTab" onclick="showLogin()">
+            ورود
+          </button>
+
+          <button class="tab" id="registerTab" onclick="showRegister()">
+            ثبت‌نام
+          </button>
+        </div>
+
+        <form id="authForm" onsubmit="handleAuth(event)">
+          <div class="field hidden" id="nameField">
+            <label>نام شما</label>
+            <input id="nameInput" type="text" placeholder="نام خود را وارد کنید">
+          </div>
+
+          <div class="field">
+            <label>ایمیل</label>
+            <input id="emailInput" type="email" placeholder="example@email.com" required>
+          </div>
+
+          <div class="field">
+            <label>رمز عبور</label>
+            <div class="password-box">
+              <input id="passwordInput" type="password" placeholder="رمز عبور" required>
+              <button type="button" class="show-password" onclick="togglePassword()">👁</button>
+            </div>
+          </div>
+
+          <button class="main-btn" id="authButton" type="submit">
+            ورود به حساب
+          </button>
+        </form>
+
+        <div class="message" id="authMessage">
+          حساب خود را بسازید یا وارد شوید.
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- برنامه اصلی -->
+  <section id="appPage" class="app hidden">
+
+    <header class="topbar">
+      <div class="top-logo">Nexora AI</div>
+
+      <div class="top-actions">
+        <button class="small-btn" onclick="toggleTheme()">☀️ / 🌙</button>
+
+        <select class="small-btn" id="languageSelect" onchange="changeLanguage()">
+          <option value="fa">فارسی</option>
+          <option value="de">Deutsch</option>
+          <option value="en">English</option>
+        </select>
+
+        <button class="small-btn" onclick="logout()">خروج</button>
+      </div>
+    </header>
+
+    <div class="app-body">
+
+      <aside class="sidebar">
+        <button class="new-chat" onclick="newChat()">＋ گفتگوی جدید</button>
+
+        <div class="side-title">تاریخچه گفتگوها</div>
+
+        <div id="history" class="history"></div>
+      </aside>
+
+      <main class="chat-area">
+
+        <div class="welcome" id="welcome">
+          <h1>Nexora AI</h1>
+          <p>
+            سلام! من دستیار هوش مصنوعی Nexora AI هستم.
+            سوالت را بنویس تا با هم شروع کنیم.
+          </p>
+        </div>
+
+        <div id="messages" class="messages"></div>
+
+        <div class="composer">
+          <div class="input-box">
+            <label class="file-btn">
+              📎
+              <input type="file" id="fileInput" hidden onchange="selectFile()">
+            </label>
+
+            <textarea id="messageInput"
+              placeholder="پیام خود را بنویسید..."
+              onkeydown="handleKey(event)"></textarea>
+
+            <button class="send-btn" onclick="sendMessage()">ارسال</button>
+          </div>
+
+          <div class="file-name" id="fileName"></div>
+        </div>
+
+      </main>
+    </div>
+  </section>
+
+  <script>
+    let authMode = "login";
+    let currentChat = [];
+    let chats = JSON.parse(localStorage.getItem("nexoraChats") || "[]");
+    let selectedFile = null;
+
+    const authPage = document.getElementById("authPage");
+    const appPage = document.getElementById("appPage");
+    const authForm = document.getElementById("authForm");
+    const authMessage = document.getElementById("authMessage");
+    const messages = document.getElementById("messages");
+    const welcome = document.getElementById("welcome");
+    const history = document.getElementById("history");
+    const messageInput = document.getElementById("messageInput");
+
+    function showLogin() {
+      authMode = "login";
+
+      document.getElementById("loginTab").classList.add("active");
+      document.getElementById("registerTab").classList.remove("active");
+      document.getElementById("nameField").classList.add("hidden");
+
+      document.getElementById("authTitle").textContent = "خوش آمدید";
+      document.getElementById("authSubtitle").textContent =
+        "برای استفاده از Nexora AI وارد شوید.";
+      document.getElementById("authButton").textContent = "ورود به حساب";
+      authMessage.textContent = "ایمیل و رمز عبور خود را وارد کنید.";
+    }
+
+    function showRegister() {
+      authMode = "register";
+
+      document.getElementById("loginTab").classList.remove("active");
+      document.getElementById("registerTab").classList.add("active");
+      document.getElementById("nameField").classList.remove("hidden");
+
+      document.getElementById("authTitle").textContent = "ساخت حساب جدید";
+      document.getElementById("authSubtitle").textContent =
+        "برای شروع، حساب Nexora AI خود را بسازید.";
+      document.getElementById("authButton").textContent = "ثبت‌نام";
+      authMessage.textContent = "اطلاعات خود را وارد کنید.";
+    }
+
+    function togglePassword() {
+      const input = document.getElementById("passwordInput");
+      input.type = input.type === "password" ? "text" : "password";
+    }
+
+    function handleAuth(event) {
+      event.preventDefault();
+
+      const name = document.getElementById("nameInput").value.trim();
+      const email = document.getElementById("emailInput").value.trim();
+      const password = document.getElementById("passwordInput").value;
+
+      if (password.length < 4) {
+        authMessage.textContent = "رمز عبور باید حداقل ۴ حرف داشته باشد.";
+        return;
+      }
+
+      if (authMode === "register") {
+        if (!name) {
+          authMessage.textContent = "لطفاً نام خود را وارد کنید.";
+          return;
+        }
+
+        const user = {
+          name: name,
+          email: email,
+          password: password
+        };
+
+        localStorage.setItem("nexoraUser", JSON.stringify(user));
+        localStorage.setItem("nexoraLoggedIn", "true");
+
+        openApp();
+      } else {
+        const savedUser = JSON.parse(
+          localStorage.getItem("nexoraUser") || "null"
+        );
+
+        if (!savedUser) {
+          authMessage.textContent = "ابتدا باید ثبت‌نام کنید.";
+          return;
+        }
+
+        if (savedUser.email !== email || savedUser.password !== password) {
+          authMessage.textContent = "ایمیل یا رمز عبور اشتباه است.";
+          return;
+        }
+
+        localStorage.setItem("nexoraLoggedIn", "true");
+        openApp();
+      }
+    }
+
+    function openApp() {
+      authPage.classList.add("hidden");
+      appPage.classList.remove("hidden");
+
+      renderHistory();
+      renderMessages();
+    }
+
+    function logout() {
+      localStorage.removeItem("nexoraLoggedIn");
+      appPage.classList.add("hidden");
+      authPage.classList.remove("hidden");
+      authForm.reset();
+      showLogin();
+    }
+
+    function toggleTheme() {
+      document.body.classList.toggle("light");
+
+      localStorage.setItem(
+        "nexoraTheme",
+        document.body.classList.contains("light") ? "light" : "dark"
+      );
+    }
+
+    function newChat() {
+      if (currentChat.length > 0) {
+        chats.unshift({
+          id: Date.now(),
+          title: currentChat[0].text.substring(0, 35),
+          messages: currentChat
+        });
+
+        localStorage.setItem("nexoraChats", JSON.stringify(chats));
+      }
+
+      currentChat = [];
+      renderMessages();
+      renderHistory();
+    }
+
+    function renderHistory() {
+      history.innerHTML = "";
+
+      if (chats.length === 0) {
+        history.innerHTML = '<div class="empty">هنوز گفتگویی وجود ندارد.</div>';
+        return;
+      }
+
+      chats.forEach(chat => {
+        const item = document.createElement("div");
+        item.className = "history-item";
+
+        const title = document.createElement("span");
+        title.textContent = chat.title || "گفتگو";
+
+        const openButton = document.createElement("button");
+        openButton.className = "history-item";
+        openButton.style.flex = "1";
+        openButton.textContent = chat.title || "گفتگو";
+        openButton.onclick = () => {
+          currentChat = chat.messages || [];
+          renderMessages();
+        };
+
+        const deleteButton = document.createElement("button");
+        deleteButton.className = "delete-history";
+        deleteButton.textContent = "×";
+        deleteButton.onclick = () => deleteChat(chat.id);
+
+        item.innerHTML = "";
+        item.appendChild(openButton);
+        item.appendChild(deleteButton);
+        history.appendChild(item);
+      });
+    }
+
+    function deleteChat(id) {
+      chats = chats.filter(chat => chat.id !== id);
+      localStorage.setItem("nexoraChats", JSON.stringify(chats));
+      renderHistory();
+    }
+
+    function renderMessages() {
+      messages.innerHTML = "";
+
+      if (currentChat.length === 0) {
+        welcome.classList.remove("hidden");
+        return;
+      }
+
+      welcome.classList.add("hidden");
+
+      currentChat.forEach(item => {
+        addMessageToScreen(item.role, item.text, false);
+      });
+
+      messages.scrollTop = messages.scrollHeight;
+    }
+
+    function addMessageToScreen(role, text, save = true) {
+      const row = document.createElement("div");
+      row.className = "message-row " + role;
+
+      const bubble = document.createElement("div");
+      bubble.className = "bubble";
+      bubble.textContent = text;
+
+      if (role === "ai") {
+        const actions = document.createElement("div");
+        actions.className = "bubble-actions";
+
+        const copy = document.createElement("button");
+        copy.textContent = "کپی";
+        copy.onclick = () => {
+          navigator.clipboard.writeText(text);
+          copy.textContent = "کپی شد";
+        };
+
+        actions.appendChild(copy);
+        bubble.appendChild(actions);
+      }
+
+      row.appendChild(bubble);
+      messages.appendChild(row);
+
+      if (save) {
+        currentChat.push({ role, text });
+      }
+
+      messages.scrollTop = messages.scrollHeight;
+    }
+
+    async function sendMessage() {
+      const text = messageInput.value.trim();
+
+      if (!text && !selectedFile) return;
+
+      let finalText = text;
+
+      if (selectedFile) {
+        finalText += "\n\nفایل انتخاب‌شده: " + selectedFile.name;
+      }
+
+      addMessageToScreen("user", finalText);
+      messageInput.value = "";
+      selectedFile = null;
+      document.getElementById("fileName").textContent = "";
+
+      const loadingText = "در حال فکر کردن...";
+      addMessageToScreen("ai", loadingText);
+
+      const loadingIndex = currentChat.length - 1;
+
+      try {
+        const conversation = currentChat
+          .slice(0, -1)
+          .map(item => ({
+            role: item.role === "ai" ? "assistant" : "user",
+            content: item.text
+          }));
+
+        const response = await puter.ai.chat(conversation);
+
+        let answer = "";
+
+        if (typeof response === "string") {
+          answer = response;
+        } else if (response && response.message) {
+          if (typeof response.message === "string") {
+            answer = response.message;
+          } else {
+            answer = response.message.content || "پاسخی دریافت نشد.";
+          }
+        } else {
+          answer = "پاسخی دریافت نشد.";
+        }
+
+        currentChat[loadingIndex].text = answer;
+        renderMessages();
+
+        localStorage.setItem("nexoraChats", JSON.stringify(chats));
+      } catch (error) {
+        currentChat[loadingIndex].text =
+          "متأسفانه خطایی رخ داد. دوباره تلاش کنید.";
+        renderMessages();
+        console.error(error);
+      }
+    }
+
+    function handleKey(event) {
+      if (event.key === "Enter" && !event.shiftKey) {
+        event.preventDefault();
+        sendMessage();
+      }
+    }
+
+    function selectFile() {
+      const input = document.getElementById("fileInput");
+
+      if (input.files.length > 0) {
+        selectedFile = input.files[0];
+        document.getElementById("fileName").textContent =
+          "فایل انتخاب شد: " + selectedFile.name;
+      }
+    }
+
+    function changeLanguage() {
+      const language = document.getElementById("languageSelect").value;
+
+      if (language === "de") {
+        messageInput.placeholder = "Schreiben Sie Ihre Nachricht...";
+      } else if (language === "en") {
+        messageInput.placeholder = "Write your message...";
+      } else {
+        messageInput.placeholder = "پیام خود را بنویسید...";
+      }
+    }
+
+    window.addEventListener("load", () => {
+      const theme = localStorage.getItem("nexoraTheme");
+
+      if (theme === "light") {
+        document.body.classList.add("light");
+      }
+
+      if (localStorage.getItem("nexoraLoggedIn") === "true") {
+        openApp();
+      } else {
+        showLogin();
+      }
+    });
+  </script>
+
+</body>
+</html>
