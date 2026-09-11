@@ -1,0 +1,1051 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Nexora AI</title>
+
+  <script src="https://js.puter.com/v2/"></script>
+
+  <style>
+    :root {
+      --bg: #020617;
+      --panel: #0f172a;
+      --panel2: #1e293b;
+      --text: #f8fafc;
+      --muted: #94a3b8;
+      --border: #334155;
+      --primary: #2563eb;
+      --primary-hover: #1d4ed8;
+      --danger: #dc2626;
+    }
+
+    body.light {
+      --bg: #f1f5f9;
+      --panel: #ffffff;
+      --panel2: #e2e8f0;
+      --text: #0f172a;
+      --muted: #64748b;
+      --border: #cbd5e1;
+      --primary: #2563eb;
+      --primary-hover: #1d4ed8;
+      --danger: #dc2626;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      height: 100vh;
+      overflow: hidden;
+      transition: 0.3s;
+    }
+
+    button,
+    textarea,
+    input,
+    select {
+      font: inherit;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    .app {
+      display: flex;
+      height: 100vh;
+    }
+
+    .sidebar {
+      width: 280px;
+      background: var(--panel);
+      border-left: 1px solid var(--border);
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      z-index: 5;
+    }
+
+    .logo {
+      text-align: center;
+      font-size: 27px;
+      font-weight: bold;
+      color: #38bdf8;
+      margin-bottom: 8px;
+    }
+
+    .logo span {
+      color: var(--text);
+    }
+
+    .side-button,
+    .new-chat,
+    .delete-history {
+      width: 100%;
+      padding: 12px;
+      border: none;
+      border-radius: 10px;
+      color: white;
+      background: var(--primary);
+      transition: 0.2s;
+    }
+
+    .side-button:hover,
+    .new-chat:hover {
+      background: var(--primary-hover);
+    }
+
+    .delete-history {
+      background: var(--panel2);
+      color: var(--text);
+    }
+
+    .delete-history:hover {
+      background: var(--danger);
+      color: white;
+    }
+
+    .history-title {
+      color: var(--muted);
+      font-size: 13px;
+      margin-top: 10px;
+    }
+
+    .history {
+      flex: 1;
+      overflow-y: auto;
+    }
+
+    .history-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 5px;
+      background: var(--panel2);
+      padding: 10px;
+      border-radius: 9px;
+      margin-bottom: 8px;
+      color: var(--text);
+      font-size: 13px;
+    }
+
+    .history-name {
+      flex: 1;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      cursor: pointer;
+    }
+
+    .remove-chat {
+      border: none;
+      background: transparent;
+      color: #f87171;
+      font-size: 16px;
+      padding: 3px;
+    }
+
+    .main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+    }
+
+    .topbar {
+      height: 65px;
+      padding: 15px 20px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: var(--panel);
+    }
+
+    .topbar-title {
+      font-size: 20px;
+      font-weight: bold;
+      color: var(--text);
+    }
+
+    .top-actions {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .icon-button {
+      border: 1px solid var(--border);
+      background: var(--panel2);
+      color: var(--text);
+      border-radius: 9px;
+      padding: 8px 11px;
+    }
+
+    .icon-button:hover {
+      background: var(--primary);
+      color: white;
+    }
+
+    #languageSelect {
+      background: var(--panel2);
+      color: var(--text);
+      border: 1px solid var(--border);
+      border-radius: 9px;
+      padding: 8px;
+      outline: none;
+    }
+
+    .intro {
+      padding: 35px 20px 20px;
+      text-align: center;
+    }
+
+    .intro h1 {
+      font-size: 38px;
+      color: #38bdf8;
+      margin-bottom: 12px;
+    }
+
+    .intro p {
+      max-width: 650px;
+      margin: auto;
+      color: var(--muted);
+      line-height: 1.9;
+    }
+
+    .features {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    .feature {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 12px 18px;
+      color: var(--text);
+      font-size: 13px;
+    }
+
+    .chat-box {
+      flex: 1;
+      overflow-y: auto;
+      padding: 20px;
+    }
+
+    .message {
+      max-width: 900px;
+      margin: 15px auto;
+      padding: 15px;
+      border-radius: 14px;
+      line-height: 1.9;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+    }
+
+    .user {
+      background: var(--primary);
+      color: white;
+    }
+
+    .ai {
+      background: var(--panel2);
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+
+    .message-content {
+      white-space: pre-wrap;
+    }
+
+    .message-actions {
+      display: flex;
+      gap: 7px;
+      margin-top: 10px;
+      flex-wrap: wrap;
+    }
+
+    .message-actions button {
+      border: 1px solid var(--border);
+      background: var(--panel);
+      color: var(--text);
+      padding: 6px 10px;
+      border-radius: 8px;
+      font-size: 12px;
+    }
+
+    .message-actions button:hover {
+      background: var(--primary);
+      color: white;
+    }
+
+    .file-preview {
+      margin-top: 10px;
+      padding: 10px;
+      border-radius: 8px;
+      background: rgba(0, 0, 0, 0.15);
+      font-size: 12px;
+    }
+
+    .typing {
+      display: none;
+      text-align: center;
+      color: var(--muted);
+      padding: 8px;
+    }
+
+    .input-area {
+      padding: 15px;
+      background: var(--panel);
+      border-top: 1px solid var(--border);
+    }
+
+    .input-box {
+      max-width: 900px;
+      margin: auto;
+      display: flex;
+      gap: 8px;
+      align-items: flex-end;
+    }
+
+    #userInput {
+      flex: 1;
+      min-height: 48px;
+      max-height: 130px;
+      resize: vertical;
+      background: var(--panel2);
+      color: var(--text);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 13px;
+      outline: none;
+    }
+
+    #userInput:focus {
+      border-color: #38bdf8;
+    }
+
+    #sendBtn {
+      min-height: 48px;
+      padding: 0 18px;
+      border: none;
+      border-radius: 12px;
+      background: var(--primary);
+      color: white;
+    }
+
+    #sendBtn:disabled {
+      background: #64748b;
+      cursor: not-allowed;
+    }
+
+    .upload-label {
+      min-height: 48px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0 12px;
+      border-radius: 12px;
+      background: var(--panel2);
+      border: 1px solid var(--border);
+      color: var(--text);
+      cursor: pointer;
+    }
+
+    #fileInput {
+      display: none;
+    }
+
+    .selected-file {
+      max-width: 900px;
+      margin: 8px auto 0;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .mobile-menu {
+      display: none;
+    }
+
+    @media (max-width: 800px) {
+      .sidebar {
+        position: fixed;
+        right: -290px;
+        top: 0;
+        bottom: 0;
+        transition: 0.3s;
+      }
+
+      .sidebar.open {
+        right: 0;
+      }
+
+      .mobile-menu {
+        display: inline-block;
+      }
+
+      .intro {
+        padding-top: 25px;
+      }
+
+      .intro h1 {
+        font-size: 29px;
+      }
+
+      .intro p {
+        font-size: 13px;
+      }
+
+      .features {
+        gap: 6px;
+      }
+
+      .feature {
+        padding: 8px 10px;
+        font-size: 11px;
+      }
+
+      .chat-box {
+        padding: 10px;
+      }
+
+      .message {
+        font-size: 14px;
+        padding: 12px;
+      }
+
+      .input-box {
+        gap: 5px;
+      }
+
+      #sendBtn {
+        padding: 0 13px;
+      }
+
+      .upload-label {
+        padding: 0 10px;
+      }
+
+      #languageSelect {
+        max-width: 105px;
+      }
+    }
+
+    @media (max-width: 450px) {
+      .topbar {
+        padding: 10px;
+      }
+
+      .topbar-title {
+        font-size: 16px;
+      }
+
+      .top-actions {
+        gap: 4px;
+      }
+
+      .icon-button {
+        padding: 7px;
+      }
+
+      #languageSelect {
+        font-size: 11px;
+        max-width: 85px;
+      }
+
+      .intro h1 {
+        font-size: 25px;
+      }
+
+      .input-area {
+        padding: 8px;
+      }
+
+      #userInput {
+        font-size: 13px;
+      }
+
+      #sendBtn {
+        font-size: 12px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="app">
+
+    <aside class="sidebar" id="sidebar">
+      <div class="logo">
+        Nexora <span>AI</span>
+      </div>
+
+      <button class="new-chat" onclick="newChat()">
+        + گفتگوی جدید
+      </button>
+
+      <button class="side-button" onclick="showAbout()">
+        درباره Nexora AI
+      </button>
+
+      <button class="delete-history" onclick="deleteAllHistory()">
+        حذف تمام تاریخچه
+      </button>
+
+      <div class="history-title">
+        گفتگوهای اخیر
+      </div>
+
+      <div class="history" id="history"></div>
+    </aside>
+
+    <main class="main">
+
+      <header class="topbar">
+        <button class="icon-button mobile-menu" onclick="toggleSidebar()">
+          ☰
+        </button>
+
+        <div class="topbar-title">
+          Nexora AI
+        </div>
+
+        <div class="top-actions">
+          <select id="languageSelect" onchange="changeLanguage()">
+            <option value="fa">فارسی</option>
+            <option value="de">Deutsch</option>
+            <option value="en">English</option>
+          </select>
+
+          <button class="icon-button" onclick="toggleTheme()" id="themeButton">
+            ☀️
+          </button>
+        </div>
+      </header>
+
+      <section class="intro" id="intro">
+        <h1>Nexora AI</h1>
+
+        <p id="introText">
+          یک دستیار هوشمند سریع و ساده برای پاسخ‌گویی، یادگیری، نوشتن و انجام کارهای روزانه.
+          با Nexora AI می‌توانید در هر زمان سوال‌های خود را بپرسید.
+        </p>
+
+        <div class="features">
+          <div class="feature">🤖 هوش مصنوعی</div>
+          <div class="feature">🌍 چندزبانه</div>
+          <div class="feature">📁 آپلود فایل</div>
+          <div class="feature">⚡ سریع و ساده</div>
+        </div>
+      </section>
+
+      <div class="chat-box" id="chatBox"></div>
+
+      <div class="typing" id="typing">
+        هوش مصنوعی در حال پاسخ دادن است...
+      </div>
+
+      <div class="input-area">
+
+        <div class="input-box">
+
+          <label class="upload-label" for="fileInput">
+            📎
+          </label>
+
+          <input
+            type="file"
+            id="fileInput"
+            accept="image/*,.pdf,.txt,.doc,.docx"
+            onchange="handleFile()"
+          >
+
+          <textarea
+            id="userInput"
+            placeholder="پیام خود را بنویسید..."
+            rows="1"
+          ></textarea>
+
+          <button id="sendBtn" onclick="sendMessage()">
+            ارسال
+          </button>
+
+        </div>
+
+        <div class="selected-file" id="selectedFile"></div>
+
+      </div>
+
+    </main>
+  </div>
+
+  <script>
+    let conversation = [];
+    let currentChatId = null;
+    let selectedFile = null;
+
+    const chatBox = document.getElementById("chatBox");
+    const userInput = document.getElementById("userInput");
+    const sendBtn = document.getElementById("sendBtn");
+    const typing = document.getElementById("typing");
+    const historyBox = document.getElementById("history");
+    const intro = document.getElementById("intro");
+    const selectedFileBox = document.getElementById("selectedFile");
+
+    const translations = {
+      fa: {
+        placeholder: "پیام خود را بنویسید...",
+        send: "ارسال",
+        typing: "هوش مصنوعی در حال پاسخ دادن است...",
+        copy: "📋 کپی",
+        copied: "✅ کپی شد",
+        like: "👍 پسندیدن",
+        dislike: "👎 نپسندیدن",
+        newChat: "+ گفتگوی جدید",
+        about: "درباره Nexora AI",
+        deleteAll: "حذف تمام تاریخچه",
+        intro: "یک دستیار هوشمند سریع و ساده برای پاسخ‌گویی، یادگیری، نوشتن و انجام کارهای روزانه. با Nexora AI می‌توانید در هر زمان سوال‌های خود را بپرسید.",
+        file: "فایل انتخاب‌شده: "
+      },
+      de: {
+        placeholder: "Schreiben Sie Ihre Nachricht...",
+        send: "Senden",
+        typing: "Die KI antwortet gerade...",
+        copy: "📋 Kopieren",
+        copied: "✅ Kopiert",
+        like: "👍 Gefällt mir",
+        dislike: "👎 Gefällt mir nicht",
+        newChat: "+ Neuer Chat",
+        about: "Über Nexora AI",
+        deleteAll: "Verlauf löschen",
+        intro: "Ein schneller und einfacher KI-Assistent zum Antworten, Lernen, Schreiben und für alltägliche Aufgaben.",
+        file: "Ausgewählte Datei: "
+      },
+      en: {
+        placeholder: "Write your message...",
+        send: "Send",
+        typing: "AI is responding...",
+        copy: "📋 Copy",
+        copied: "✅ Copied",
+        like: "👍 Like",
+        dislike: "👎 Dislike",
+        newChat: "+ New chat",
+        about: "About Nexora AI",
+        deleteAll: "Delete history",
+        intro: "A fast and simple AI assistant for answering questions, learning, writing, and everyday tasks.",
+        file: "Selected file: "
+      }
+    };
+
+    function currentLanguage() {
+      return document.getElementById("languageSelect").value;
+    }
+
+    function changeLanguage() {
+      const lang = currentLanguage();
+      const t = translations[lang];
+
+      document.documentElement.lang = lang;
+      document.documentElement.dir = lang === "fa" ? "rtl" : "ltr";
+
+      userInput.placeholder = t.placeholder;
+      sendBtn.textContent = t.send;
+      typing.textContent = t.typing;
+      introText.textContent = t.intro;
+
+      document.querySelector(".new-chat").textContent = t.newChat;
+      document.querySelector(".side-button").textContent = t.about;
+      document.querySelector(".delete-history").textContent = t.deleteAll;
+
+      if (selectedFile) {
+        selectedFileBox.textContent = t.file + selectedFile.name;
+      }
+    }
+
+    function toggleTheme() {
+      document.body.classList.toggle("light");
+
+      const isLight = document.body.classList.contains("light");
+      document.getElementById("themeButton").textContent = isLight ? "🌙" : "☀️";
+
+      localStorage.setItem("nexoraTheme", isLight ? "light" : "dark");
+    }
+
+    function loadTheme() {
+      const theme = localStorage.getItem("nexoraTheme");
+
+      if (theme === "light") {
+        document.body.classList.add("light");
+        document.getElementById("themeButton").textContent = "🌙";
+      }
+    }
+
+    function toggleSidebar() {
+      document.getElementById("sidebar").classList.toggle("open");
+    }
+
+    function addMessage(text, type, fileName = "") {
+      intro.style.display = "none";
+
+      const message = document.createElement("div");
+      message.className = "message " + type;
+
+      const content = document.createElement("div");
+      content.className = "message-content";
+      content.textContent = text;
+
+      message.appendChild(content);
+
+      if (fileName) {
+        const filePreview = document.createElement("div");
+        filePreview.className = "file-preview";
+        filePreview.textContent = "📎 " + fileName;
+        message.appendChild(filePreview);
+      }
+
+      if (type === "ai") {
+        const actions = document.createElement("div");
+        actions.className = "message-actions";
+
+        const copyButton = document.createElement("button");
+        copyButton.textContent = translations[currentLanguage()].copy;
+
+        copyButton.onclick = async function() {
+          try {
+            await navigator.clipboard.writeText(text);
+            copyButton.textContent = translations[currentLanguage()].copied;
+
+            setTimeout(() => {
+              copyButton.textContent = translations[currentLanguage()].copy;
+            }, 1500);
+          } catch {
+            alert("کپی انجام نشد");
+          }
+        };
+
+        const likeButton = document.createElement("button");
+        likeButton.textContent = translations[currentLanguage()].like;
+
+        likeButton.onclick = function() {
+          likeButton.textContent = "✅";
+          dislikeButton.textContent = translations[currentLanguage()].dislike;
+        };
+
+        const dislikeButton = document.createElement("button");
+        dislikeButton.textContent = translations[currentLanguage()].dislike;
+
+        dislikeButton.onclick = function() {
+          dislikeButton.textContent = "✅";
+          likeButton.textContent = translations[currentLanguage()].like;
+        };
+
+        actions.appendChild(copyButton);
+        actions.appendChild(likeButton);
+        actions.appendChild(dislikeButton);
+
+        message.appendChild(actions);
+      }
+
+      chatBox.appendChild(message);
+      chatBox.scrollTop = chatBox.scrollHeight;
+    }
+
+    function handleFile() {
+      const fileInput = document.getElementById("fileInput");
+
+      if (!fileInput.files.length) {
+        selectedFile = null;
+        selectedFileBox.textContent = "";
+        return;
+      }
+
+      selectedFile = fileInput.files[0];
+
+      selectedFileBox.textContent =
+        translations[currentLanguage()].file + selectedFile.name;
+    }
+
+    async function sendMessage() {
+      const text = userInput.value.trim();
+
+      if (!text && !selectedFile) {
+        return;
+      }
+
+      sendBtn.disabled = true;
+
+      let finalText = text;
+      let fileName = "";
+
+      if (selectedFile) {
+        fileName = selectedFile.name;
+        finalText += "\n\n[فایل انتخاب‌شده: " + fileName + "]";
+      }
+
+      userInput.value = "";
+      selectedFileBox.textContent = "";
+
+      addMessage(finalText, "user", fileName);
+
+      conversation.push({
+        role: "user",
+        content: finalText
+      });
+
+      selectedFile = null;
+      document.getElementById("fileInput").value = "";
+
+      typing.style.display = "block";
+
+      try {
+        const response = await puter.ai.chat(conversation);
+
+        let answer = "";
+
+        if (typeof response === "string") {
+          answer = response;
+        } else if (response && response.message) {
+          if (typeof response.message === "string") {
+            answer = response.message;
+          } else {
+            answer = response.message.content || "";
+          }
+        } else if (response && response.content) {
+          answer = response.content;
+        } else {
+          answer = "پاسخی دریافت نشد.";
+        }
+
+        addMessage(answer, "ai");
+
+        conversation.push({
+          role: "assistant",
+          content: answer
+        });
+
+        saveCurrentChat();
+
+      } catch (error) {
+        console.error(error);
+
+        addMessage(
+          "خطا در اتصال به هوش مصنوعی. لطفاً دوباره تلاش کنید.",
+          "ai"
+        );
+
+      } finally {
+        typing.style.display = "none";
+        sendBtn.disabled = false;
+        userInput.focus();
+      }
+    }
+
+    function saveCurrentChat() {
+      if (!conversation.length) {
+        return;
+      }
+
+      let chats = JSON.parse(
+        localStorage.getItem("nexoraChats") || "[]"
+      );
+
+      if (!currentChatId) {
+        currentChatId = Date.now();
+      }
+
+      const firstMessage = conversation.find(
+        item => item.role === "user"
+      );
+
+      let title = firstMessage
+        ? firstMessage.content
+        : "گفتگوی جدید";
+
+      title = title.replace(/\[فایل انتخاب‌شده:.*?\]/g, "").trim();
+
+      if (title.length > 35) {
+        title = title.substring(0, 35) + "...";
+      }
+
+      const chatData = {
+        id: currentChatId,
+        title: title || "گفتگوی جدید",
+        messages: conversation
+      };
+
+      const index = chats.findIndex(
+        chat => chat.id === currentChatId
+      );
+
+      if (index !== -1) {
+        chats[index] = chatData;
+      } else {
+        chats.unshift(chatData);
+      }
+
+      chats = chats.slice(0, 30);
+
+      localStorage.setItem(
+        "nexoraChats",
+        JSON.stringify(chats)
+      );
+
+      loadHistory();
+    }
+
+    function loadHistory() {
+      historyBox.innerHTML = "";
+
+      const chats = JSON.parse(
+        localStorage.getItem("nexoraChats") || "[]"
+      );
+
+      chats.forEach(chat => {
+        const item = document.createElement("div");
+        item.className = "history-item";
+
+        const name = document.createElement("div");
+        name.className = "history-name";
+        name.textContent = chat.title;
+
+        name.onclick = function() {
+          openChat(chat.id);
+        };
+
+        const removeButton = document.createElement("button");
+        removeButton.className = "remove-chat";
+        removeButton.textContent = "×";
+
+        removeButton.onclick = function(event) {
+          event.stopPropagation();
+          deleteChat(chat.id);
+        };
+
+        item.appendChild(name);
+        item.appendChild(removeButton);
+        historyBox.appendChild(item);
+      });
+    }
+
+    function openChat(id) {
+      const chats = JSON.parse(
+        localStorage.getItem("nexoraChats") || "[]"
+      );
+
+      const selectedChat = chats.find(
+        chat => chat.id === id
+      );
+
+      if (!selectedChat) {
+        return;
+      }
+
+      currentChatId = selectedChat.id;
+      conversation = selectedChat.messages || [];
+
+      chatBox.innerHTML = "";
+      intro.style.display = "none";
+
+      conversation.forEach(message => {
+        if (message.role === "user") {
+          addMessage(message.content, "user");
+        } else if (message.role === "assistant") {
+          addMessage(message.content, "ai");
+        }
+      });
+
+      document.getElementById("sidebar").classList.remove("open");
+    }
+
+    function deleteChat(id) {
+      let chats = JSON.parse(
+        localStorage.getItem("nexoraChats") || "[]"
+      );
+
+      chats = chats.filter(chat => chat.id !== id);
+
+      localStorage.setItem(
+        "nexoraChats",
+        JSON.stringify(chats)
+      );
+
+      if (currentChatId === id) {
+        newChat();
+      }
+
+      loadHistory();
+    }
+
+    function deleteAllHistory() {
+      const lang = currentLanguage();
+
+      const question = lang === "de"
+        ? "Möchten Sie den gesamten Verlauf löschen?"
+        : lang === "en"
+        ? "Do you want to delete all history?"
+        : "آیا می‌خواهید تمام تاریخچه حذف شود؟";
+
+      if (!confirm(question)) {
+        return;
+      }
+
+      localStorage.removeItem("nexoraChats");
+      loadHistory();
+      newChat();
+    }
+
+    function newChat() {
+      conversation = [];
+      currentChatId = null;
+
+      chatBox.innerHTML = "";
+      intro.style.display = "block";
+
+      userInput.value = "";
+      selectedFile = null;
+      selectedFileBox.textContent = "";
+      document.getElementById("fileInput").value = "";
+
+      userInput.focus();
+    }
+
+    function showAbout() {
+      const lang = currentLanguage();
+
+      const text = lang === "de"
+        ? "Nexora AI ist ein modernes KI-Projekt für Lernen, Schreiben, Fragen und alltägliche Aufgaben."
+        : lang === "en"
+        ? "Nexora AI is a modern AI project for learning, writing, questions, and everyday tasks."
+        : "Nexora AI یک پروژه هوش مصنوعی مدرن برای یادگیری، نوشتن، پرسش‌وپاسخ و کارهای روزانه است.";
+
+      alert(text);
+    }
+
+    userInput.addEventListener("keydown", function(event) {
+      if (event.key === "Enter" && !event.shiftKey) {
+        event.preventDefault();
+        sendMessage();
+      }
+    });
+
+    loadTheme();
+    loadHistory();
+    changeLanguage();
+  </script>
+
+</body>
+</html>
