@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nexora AI</title>
+<script src="https://js.puter.com/v2/"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800&display=swap');
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+:root {
+    --bg: #070b14;
+    --sidebar: #0b1120;
+    --card: #101a2c;
+    --border: #1c2d48;
+    --blue: #1683ff;
+    --text: #f1f5ff;
+    --muted: #8494ad;
+}
+body {
+    font-family: 'Vazirmatn', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    height: 100vh;
+    overflow: hidden;
+}
+.app {
+    display: flex;
+    height: 100vh;
+}
+.sidebar {
+    width: 270px;
+    background: var(--sidebar);
+    border-left: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    padding: 20px 15px;
+    transition: .3s;
+    z-index: 10;
+}
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px;
+    margin-bottom: 30px;
+}
+.logo-icon {
+    width: 43px;
+    height: 43px;
+    border-radius: 14px;
+    background: linear-gradient(135deg, #087cff, #0046a8);
+    display: grid;
+    place-items: center;
+    font-size: 22px;
+    font-weight: 800;
+    box-shadow: 0 0 25px #087cff45;
+}
+.logo h2 {
+    font-size: 20px;
+}
+.logo span {
+    color: #318dff;
+}
+.new-chat {
+    background: linear-gradient(135deg, #147eff, #0753b8);
+    border: none;
+    border-radius: 13px;
+    color: white;
+    padding: 14px;
+    font-family: inherit;
+    font-size: 14px;
+    cursor: pointer;
+    margin-bottom: 25px;
+}
+.side-title {
+    color: var(--muted);
+    font-size: 12px;
+    margin: 10px;
+}
+.chat-history {
+    flex: 1;
+    overflow-y: auto;
+}
+.history-item {
+    padding: 12px;
+    border-radius: 10px;
+    color: #b8c5d9;
+    font-size: 13px;
+    margin-bottom: 5px;
+    cursor: pointer;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.history-item:hover {
+    background: #14233b;
+    color: white;
+}
+.side-bottom {
+    border-top: 1px solid var(--border);
+    padding-top: 15px;
+}
+.side-link {
+    padding: 12px;
+    color: #a6b5ca;
+    font-size: 13px;
+}
+.main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    background:
+        radial-gradient(circle at 50% -20%, #0b3160 0%, transparent 45%),
+        var(--bg);
+}
+.topbar {
+    height: 70px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 28px;
+    border-bottom: 1px solid #15243a;
+    background: #070b14d9;
+    backdrop-filter: blur(20px);
+}
+.menu-btn {
+    display: none;
+    background: none;
+    border: none;
+    color: white;
+    font-size: 25px;
+}
+.model-name {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 14px;
+    font-weight: 600;
+}
+.status {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #22d58a;
+    box-shadow: 0 0 12px #22d58a;
+}
+.icon-btn {
+    background: #101a2c;
+    border: 1px solid #20304a;
+    color: #b7c8df;
+    width: 38px;
+    height: 38px;
+    border-radius: 11px;
+    cursor: pointer;
+}
+.chat-area {
+    flex: 1;
+    overflow-y: auto;
+    padding: 30px 20px;
+}
+.messages {
+    max-width: 850px;
+    margin: auto;
+}
+.welcome {
+    min-height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 40px 15px;
+}
+.ai-orb {
+    width: 100px;
+    height: 100px;
+    border-radius: 30px;
+    background: linear-gradient(135deg, #147eff, #082b67);
+    display: grid;
+    place-items: center;
+    font-size: 48px;
+    margin-bottom: 25px;
+    box-shadow: 0 0 70px #087cff35;
+    animation: float 4s ease-in-out infinite;
+}
+@keyframes float {
+    0%,100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
+}
+.welcome h1 {
+    font-size: 34px;
+    margin-bottom: 12px;
+    font-weight: 800;
+}
+.welcome h1 span {
+    color: #298bff;
+}
+.welcome p {
+    color: var(--muted);
+    font-size: 14px;
+    max-width: 440px;
+    line-height: 2;
+}
+.suggestions {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    max-width: 600px;
+    width: 100%;
+    margin-top: 35px;
+}
+.suggestion {
+    text-align: right;
+    padding: 16px;
+    background: #0d1728;
+    border: 1px solid #1c2d48;
+    border-radius: 15px;
+    color: #c5d2e5;
+    font-family: inherit;
+    cursor: pointer;
+}
+.suggestion strong {
+    display: block;
+    font-size: 13px;
+    margin-bottom: 6px;
+}
+.suggestion small {
+    color: #71839e;
+    font-size: 11px;
+}
+.message {
+    display: flex;
+    gap: 14px;
+    margin-bottom: 28px;
+    animation: appear .3s ease;
+}
+@keyframes appear {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+.avatar {
+    width: 36px;
+    height: 36px;
+    flex-shrink: 0;
+    border-radius: 12px;
+    display: grid;
+    place-items: center;
+    font-size: 15px;
+    font-weight: 700;
+}
+.user-avatar {
+    background: #20324d;
+}
+.ai-avatar {
+    background: linear-gradient(135deg, #147eff, #06428e);
+}
+.message-content {
+    flex: 1;
+    min-width: 0;
+}
+.message-name {
+    font-size: 12px;
+    color: #8fa4c1;
+    margin-bottom: 8px;
+}
+.message-text {
+    font-size: 14px;
+    line-height: 2;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+}
+.user-message .message-text {
+    background: #101f35;
+    border: 1px solid #1c2d48;
+    padding: 12px 15px;
+    border-radius: 14px;
+    display: inline-block;
+}
+.typing {
+    display: flex;
+    gap: 5px;
+    padding-top: 10px;
+}
+.typing span {
+    width: 7px;
+    height: 7px;
+    background: #378fff;
+    border-radius: 50%;
+    animation: blink 1.2s infinite;
+}
+.typing span:nth-child(2) {
+    animation-delay: .2s;
+}
+.typing span:nth-child(3) {
+    animation-delay: .4s;
+}
+@keyframes blink {
+    0%,100% { opacity: .2; }
+    50% { opacity: 1; }
+}
+.input-section {
+    padding: 15px 20px 20px;
+    background: linear-gradient(transparent, #070b14 30%);
+}
+.input-wrap {
+    max-width: 850px;
+    margin: auto;
+}
+.input-box {
+    display: flex;
+    align-items: flex-end;
+    gap: 10px;
+    padding: 10px;
+    background: #0d1728;
+    border: 1px solid #294363;
+    border-radius: 18px;
+    box-shadow: 0 0 40px #00000025;
+}
+.input-box:focus-within {
+    border-color: #1683ff;
+}
+textarea {
+    flex: 1;
+    background: transparent;
+    border: none;
+    outline: none;
+    color: white;
+    font-family: inherit;
+    font-size: 14px;
+    resize: none;
+    min-height: 28px;
+    max-height: 130px;
+    padding: 8px;
+    line-height: 1.8;
+}
+textarea::placeholder {
+    color: #61738f;
+}
+.send-btn {
+    width: 43px;
+    height: 43px;
+    border: none;
+    border-radius: 13px;
+    background: linear-gradient(135deg, #1683ff, #0750b5);
+    color: white;
+    font-size: 18px;
+    cursor: pointer;
+}
+.send-btn:disabled {
+    opacity: .4;
+}
+.input-note {
+    text-align: center;
+    font-size: 10px;
+    color: #53647d;
+    margin-top: 10px;
+}
+@media (max-width: 700px) {
+    .sidebar {
+        position: fixed;
+        right: -280px;
+        top: 0;
+        bottom: 0;
+    }
+    .sidebar.open {
+        right: 0;
+    }
+    .menu-btn {
+        display: block;
+    }
+    .topbar {
+        padding: 0 15px;
+        height: 62px;
+    }
+    .chat-area {
+        padding: 20px 15px;
+    }
+    .welcome h1 {
+        font-size: 26px;
+    }
+    .ai-orb {
+        width: 80px;
+        height: 80px;
+        font-size: 38px;
+    }
+    .suggestions {
+        grid-template-columns: 1fr;
+        margin-top: 25px;
+    }
+    .input-section {
+        padding: 10px 12px 15px;
+    }
+}
+</style>
+</head>
+<body>
+<div class="app">
+<aside class="sidebar" id="sidebar">
+<div class="logo">
+    <div class="logo-icon">N</div>
+    <h2>Nexora <span>AI</span></h2>
+</div>
+<button class="new-chat" id="newChat">＋ چت جدید</button>
+<div class="side-title">گفتگوهای اخیر</div>
+<div class="chat-history" id="history"></div>
+<div class="side-bottom">
+    <div class="side-link">⚙ تنظیمات</div>
+    <div class="side-link">ⓘ درباره Nexora AI</div>
+</div>
+</aside>
+<main class="main">
+<header class="topbar">
+<button class="menu-btn" id="menuBtn">☰</button>
+<div class="model-name">
+    <span class="status"></span>
+    Nexora AI
+</div>
+<button class="icon-btn" id="clearBtn">⌫</button>
+</header>
+<section class="chat-area" id="chatArea">
+<div class="messages" id="messages">
+<div class="welcome" id="welcome">
+<div class="ai-orb">✦</div>
+<h1>سلام، من <span>Nexora AI</span> هستم</h1>
+<p>
+    دستیار هوشمند شما برای یادگیری، ترجمه،
+    برنامه‌نویسی و پاسخ به پرسش‌های روزمره.
+</p>
+<div class="suggestions">
+    <button class="suggestion" data-prompt="برای من یک برنامه یادگیری زبان آلمانی بساز.">
+        <strong>📚 یادگیری زبان</strong>
+        <small>یک برنامه آموزشی برای من بساز</small>
+    </button>
+    <button class="suggestion" data-prompt="به من کمک کن یک سایت حرفه‌ای بسازم.">
+        <strong>💻 برنامه‌نویسی</strong>
+        <small>کمک در ساخت سایت و کدنویسی</small>
+    </button>
+    <button class="suggestion" data-prompt="این جمله را به زبان آلمانی ترجمه کن: من امروز به مدرسه می‌روم.">
+        <strong>🌐 ترجمه</strong>
+        <small>ترجمه به زبان‌های مختلف</small>
+    </button>
+    <button class="suggestion" data-prompt="چطور می‌توانم مهارت‌های جدید یاد بگیرم؟">
+        <strong>💡 ایده و آموزش</strong>
+        <small>ایده‌های جدید برای یادگیری</small>
+    </button>
+</div>
+</div>
+</div>
+</section>
+<section class="input-section">
+<div class="input-wrap">
+<div class="input-box">
+    <textarea id="messageInput"
+        rows="1"
+        placeholder="پیام خود را بنویسید..."></textarea>
+    <button class="send-btn" id="sendBtn">➤</button>
+</div>
+<div class="input-note">
+    Nexora AI ممکن است اشتباه کند. اطلاعات مهم را بررسی کنید.
+</div>
+</div>
+</section>
+</main>
+</div>
+<script>
+const input = document.getElementById("messageInput");
+const sendBtn = document.getElementById("sendBtn");
+const messages = document.getElementById("messages");
+const chatArea = document.getElementById("chatArea");
+const history = document.getElementById("history");
+const sidebar = document.getElementById("sidebar");
+const menuBtn = document.getElementById("menuBtn");
+const newChat = document.getElementById("newChat");
+const clearBtn = document.getElementById("clearBtn");
+let chatStarted = false;
+let busy = false;
+let conversation = [];
+function escapeHTML(text) {
+    return String(text).replace(/[&<>"']/g, function(char) {
+        return {
+            "&": "&amp;",
+            "<": "&lt;",
+            ">": "&gt;",
+            '"': "&quot;",
+            "'": "&#039;"
+        }[char];
+    });
+}
+function addMessage(text, type) {
+    if (!chatStarted) {
+        const welcome = document.getElementById("welcome");
+        if (welcome) welcome.remove();
+        chatStarted = true;
+    }
+    const message = document.createElement("div");
+    message.className = "message " + type + "-message";
+    message.innerHTML = `
+        <div class="avatar ${type}-avatar">
+            ${type === "user" ? "م" : "✦"}
+        </div>
+        <div class="message-content">
+            <div class="message-name">
+                ${type === "user" ? "شما" : "Nexora AI"}
+            </div>
+            <div class="message-text">${escapeHTML(text)}</div>
+        </div>
+    `;
+    messages.appendChild(message);
+    scrollBottom();
+}
+function showTyping() {
+    const message = document.createElement("div");
+    message.className = "message ai-message";
+    message.id = "typingMessage";
+    message.innerHTML = `
+        <div class="avatar ai-avatar">✦</div>
+        <div class="message-content">
+            <div class="message-name">Nexora AI</div>
+            <div class="typing">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    `;
+    messages.appendChild(message);
+    scrollBottom();
+}
+function removeTyping() {
+    const typing = document.getElementById("typingMessage");
+    if (typing) typing.remove();
+}
+function scrollBottom() {
+    setTimeout(() => {
+        chatArea.scrollTop = chatArea.scrollHeight;
+    }, 50);
+}
+function addHistory(text) {
+    const item = document.createElement("div");
+    item.className = "history-item";
+    item.textContent = text;
+    history.prepend(item);
+}
+async function sendMessage() {
+    if (busy) return;
+    const text = input.value.trim();
+    if (!text) return;
+    busy = true;
+    sendBtn.disabled = true;
+    addMessage(text, "user");
+    addHistory(text);
+    input.value = "";
+    input.style.height = "auto";
+    conversation.push({
+        role: "user",
+        content: text
+    });
+    showTyping();
+    try {
+        const response = await puter.ai.chat(conversation, {
+            model: "gpt-5.6-luna"
+        });
+        removeTyping();
+        let reply = "";
+        if (typeof response === "string") {
+            reply = response;
+        } else if (response && response.message) {
+            if (typeof response.message === "string") {
+                reply = response.message;
+            } else {
+                reply = response.message.content || "";
+            }
+        }
+        if (!reply) {
+            reply = "پاسخی دریافت نشد. لطفاً دوباره تلاش کنید.";
+        }
+        addMessage(reply, "ai");
+        conversation.push({
+            role: "assistant",
+            content: reply
+        });
+    } catch (error) {
+        removeTyping();
+        addMessage(
+            "متأسفانه در اتصال به هوش مصنوعی مشکلی پیش آمد. لطفاً دوباره تلاش کنید.",
+            "ai"
+        );
+        console.error(error);
+    }
+    busy = false;
+    sendBtn.disabled = false;
+}
+function startNewChat() {
+    messages.innerHTML = `
+        <div class="welcome" id="welcome">
+            <div class="ai-orb">✦</div>
+            <h1>سلام، من <span>Nexora AI</span> هستم</h1>
+            <p>
+                دستیار هوشمند شما برای یادگیری، ترجمه،
+                برنامه‌نویسی و پاسخ به پرسش‌های روزمره.
+            </p>
+            <div class="suggestions">
+                <button class="suggestion" data-prompt="برای من یک برنامه یادگیری زبان آلمانی بساز.">
+                    <strong>📚 یادگیری زبان</strong>
+                    <small>یک برنامه آموزشی برای من بساز</small>
+                </button>
+                <button class="suggestion" data-prompt="به من کمک کن یک سایت حرفه‌ای بسازم.">
+                    <strong>💻 برنامه‌نویسی</strong>
+                    <small>کمک در ساخت سایت و کدنویسی</small>
+                </button>
+                <button class="suggestion" data-prompt="این جمله را به زبان آلمانی ترجمه کن: من امروز به مدرسه می‌روم.">
+                    <strong>🌐 ترجمه</strong>
+                    <small>ترجمه به زبان‌های مختلف</small>
+                </button>
+                <button class="suggestion" data-prompt="چطور می‌توانم مهارت‌های جدید یاد بگیرم؟">
+                    <strong>💡 ایده و آموزش</strong>
+                    <small>ایده‌های جدید برای یادگیری</small>
+                </button>
+            </div>
+        </div>
+    `;
+    conversation = [];
+    chatStarted = false;
+    busy = false;
+    sendBtn.disabled = false;
+    input.value = "";
+}
+sendBtn.addEventListener("click", sendMessage);
+input.addEventListener("keydown", function(event) {
+    if (event.key === "Enter" && !event.shiftKey) {
+        event.preventDefault();
+        sendMessage();
+    }
+});
+input.addEventListener("input", function() {
+    this.style.height = "auto";
+    this.style.height = Math.min(this.scrollHeight, 130) + "px";
+});
+document.addEventListener("click", function(event) {
+    const suggestion = event.target.closest(".suggestion");
+    if (suggestion) {
+        input.value = suggestion.dataset.prompt;
+        input.focus();
+    }
+});
+newChat.addEventListener("click", startNewChat);
+clearBtn.addEventListener("click", startNewChat);
+menuBtn.addEventListener("click", function() {
+    sidebar.classList.toggle("open");
+});
+</script>
+</body>
+</html>
